@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 
 import { ThemeProvider } from '@emotion/react';
@@ -144,7 +144,7 @@ function App() {
     observationTime: '2020-12-12 22:10:00',
   });
 
-  const handleClick = () => {
+  const fetchCurrentWeather = () => {
     fetch(
       `https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`
     )
@@ -173,6 +173,10 @@ function App() {
       });
   };
 
+  useEffect(() => {
+    fetchCurrentWeather();
+  }, []);
+
   return (
     <ThemeProvider theme={theme[currentTheme]}>
       <Container>
@@ -196,7 +200,7 @@ function App() {
           {new Intl.DateTimeFormat('zh-TW', {
             hour: 'numeric',
             minute: 'numeric',
-          }).format(dayjs(currentWeather.observationTime))} <RefreshIcon onClick={handleClick} />
+          }).format(dayjs(currentWeather.observationTime))} <RefreshIcon onClick={fetchCurrentWeather} />
           </Refresh>
         </WeatherCard>
       </Container>
