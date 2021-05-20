@@ -7,6 +7,7 @@ import { ReactComponent as DayCloudyIcon } from './images/day-cloudy.svg';
 import { ReactComponent as AirFlowIcon } from './images/airFlow.svg';
 import { ReactComponent as RainIcon } from './images/rain.svg';
 import { ReactComponent as RefreshIcon } from './images/refresh.svg';
+import { ReactComponent as LoadingIcon } from './images/loading.svg';
 
 import dayjs from 'dayjs';
 
@@ -126,6 +127,17 @@ const Refresh = styled.div`
     width: 15px;
     height: 15px;
     cursor: pointer;
+    animation: rotate infinite 1.5s linear;
+    animation-duration: ${({ isLoading }) => (isLoading ? '1.5s' : '0s')};
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
   }
 `;
 
@@ -142,9 +154,16 @@ function App() {
     temperature: 22.9,
     rainPossibility: 48.3,
     observationTime: '2020-12-12 22:10:00',
+    isLoading: true,
   });
 
   const fetchCurrentWeather = () => {
+
+    setCurrentWeather((prevState) => ({
+      ...prevState,
+      isLoading: true,
+    }));
+
     fetch(
       `https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`
     )
@@ -169,6 +188,7 @@ function App() {
           windSpeed: weatherElements.WDSD,
           description: '多雲時晴',
           rainPossibility: 60,
+          isLoading: false,
         });
       });
   };
@@ -177,30 +197,40 @@ function App() {
     fetchCurrentWeather();
   }, []);
 
+  const {
+    observationTime,
+    locationName,
+    description,
+    windSpeed,
+    temperature,
+    rainPossibility,
+    isLoading,
+  } = currentWeather;
+
   return (
     <ThemeProvider theme={theme[currentTheme]}>
       <Container>
         <WeatherCard>
-          <Location>{currentWeather.locationName}</Location>
-          <Description>{currentWeather.description}</Description>
+          <Location>{locationName}</Location>
+          <Description>{description}</Description>
           <CurrentWeather>
             <Temperature>
-              {Math.round(currentWeather.temperature)} <Celsius>°C</Celsius>
+              {Math.round(temperature)} <Celsius>°C</Celsius>
             </Temperature>
             <DayCloudy />
           </CurrentWeather>
           <AirFlow>
-            <AirFlowIcon />{currentWeather.windSpeed} m/h
+            <AirFlowIcon />{windSpeed} m/h
         </AirFlow>
           <Rain>
-            <RainIcon />{currentWeather.rainPossibility}%
+            <RainIcon />{rainPossibility}%
         </Rain>
-          <Refresh>
+          <Refresh onClick={fetchCurrentWeather} isLoading={isLoading}>
             最後觀測時間：
           {new Intl.DateTimeFormat('zh-TW', {
             hour: 'numeric',
             minute: 'numeric',
-          }).format(dayjs(currentWeather.observationTime))} <RefreshIcon onClick={fetchCurrentWeather} />
+          }).format(dayjs(observationTime))} {isLoading ? <LoadingIcon /> : <RefreshIcon />}
           </Refresh>
         </WeatherCard>
       </Container>
