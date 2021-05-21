@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 
 import { ThemeProvider } from '@emotion/react';
@@ -215,26 +215,27 @@ function App() {
     isLoading: true,
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(async () => {
 
-      setWeatherElement((prevState) => ({
-        ...prevState,
-        isLoading: true,
-      }));
+    setWeatherElement((prevState) => ({
+      ...prevState,
+      isLoading: true,
+    }));
 
-      const [currentWeather, weatherForecast] = await Promise.all([
-        fetchCurrentWeather(),
-        fetchWeatherForecast(),
-      ]);
-      setWeatherElement({
-        ...currentWeather,
-        ...weatherForecast,
-        isLoading: false,
-      });
-    };
-    fetchData();
+    const [currentWeather, weatherForecast] = await Promise.all([
+      fetchCurrentWeather(),
+      fetchWeatherForecast(),
+    ]);
+    setWeatherElement({
+      ...currentWeather,
+      ...weatherForecast,
+      isLoading: false,
+    });
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const {
     observationTime,
@@ -265,10 +266,7 @@ function App() {
           <Rain>
             <RainIcon />{rainPossibility}%
         </Rain>
-          <Refresh onClick={() => {
-            fetchCurrentWeather();
-            fetchWeatherForecast();
-          }} isLoading={isLoading}>
+          <Refresh onClick={() => { fetchData() }} isLoading={isLoading}>
             最後觀測時間：
           {new Intl.DateTimeFormat('zh-TW', {
             hour: 'numeric',
