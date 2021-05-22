@@ -9,6 +9,8 @@ import { ReactComponent as RainIcon } from './images/rain.svg';
 import { ReactComponent as RefreshIcon } from './images/refresh.svg';
 import { ReactComponent as LoadingIcon } from './images/loading.svg';
 
+import WeatherIcon from './components/WeatherIcon';
+
 import dayjs from 'dayjs';
 
 // 背景顏色
@@ -109,9 +111,9 @@ const Rain = styled.div`
   }
 `;
 
-const DayCloudy = styled(DayCloudyIcon)`
-  flex-basis: 30%;
-`;
+// const DayCloudy = styled(DayCloudyIcon)`
+//   flex-basis: 30%;
+// `;
 
 const Refresh = styled.div`
   position: absolute;
@@ -258,7 +260,7 @@ function App() {
             <Temperature>
               {Math.round(temperature)} <Celsius>°C</Celsius>
             </Temperature>
-            <DayCloudy />
+            <WeatherIcon />
           </CurrentWeather>
           <AirFlow>
             <AirFlowIcon />{windSpeed} m/h
