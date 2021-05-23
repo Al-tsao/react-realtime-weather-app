@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 
 import { ThemeProvider } from '@emotion/react';
@@ -12,6 +12,8 @@ import { ReactComponent as LoadingIcon } from './images/loading.svg';
 import WeatherIcon from './components/WeatherIcon';
 
 import dayjs from 'dayjs';
+
+import { getMoment } from './utils/helpers';
 
 // 背景顏色
 const theme = {
@@ -217,6 +219,12 @@ function App() {
     isLoading: true,
   });
 
+  const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST), []);
+
+  useEffect(() => {
+    setCurrentTheme(moment === 'day' ? 'light' : 'dark');
+  }, [moment]);
+
   const fetchData = useCallback(async () => {
 
     setWeatherElement((prevState) => ({
@@ -261,7 +269,7 @@ function App() {
             <Temperature>
               {Math.round(temperature)} <Celsius>°C</Celsius>
             </Temperature>
-            <WeatherIcon weatherCode={weatherCode} moment="night" />
+            <WeatherIcon weatherCode={weatherCode} moment={moment} />
           </CurrentWeather>
           <AirFlow>
             <AirFlowIcon />{windSpeed} m/h
