@@ -4,6 +4,7 @@ import { ThemeProvider } from '@emotion/react';
 import { getMoment } from './utils/helpers';
 import WeatherCard from './views/WeatherCard';
 import useWeatherAPI from './hooks/useWeatherAPI';
+import WeatherSetting from './views/WeatherSetting';
 
 // 背景顏色
 const theme = {
@@ -48,6 +49,8 @@ function App() {
     authorizationKey: AUTHORIZATION_KEY,
   });
 
+  const [currentPage, setCurrentPage] = useState('WeatherCard');
+
   const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST), []);
 
   useEffect(() => {
@@ -61,10 +64,14 @@ function App() {
   return (
     <ThemeProvider theme={theme[currentTheme]}>
       <Container>
-        <WeatherCard
-          weatherElement={weatherElement}
-          moment={moment}
-          fetchData={fetchData} />
+        {currentPage === 'WeatherCard' && (
+          <WeatherCard
+            weatherElement={weatherElement}
+            moment={moment}
+            fetchData={fetchData}
+          />
+        )}
+        {currentPage === 'WeatherSetting' && <WeatherSetting />}
       </Container>
     </ThemeProvider>
   );
