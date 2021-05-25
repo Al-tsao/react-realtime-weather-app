@@ -50,6 +50,9 @@ function App() {
   });
 
   const [currentPage, setCurrentPage] = useState('WeatherCard');
+  const handleCurrentPageChange = (currentPage) => {
+    setCurrentPage(currentPage);
+  };
 
   const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST), []);
 
@@ -69,9 +72,10 @@ function App() {
             weatherElement={weatherElement}
             moment={moment}
             fetchData={fetchData}
+            handleCurrentPageChange={handleCurrentPageChange}
           />
         )}
-        {currentPage === 'WeatherSetting' && <WeatherSetting />}
+        {currentPage === 'WeatherSetting' && <WeatherSetting handleCurrentPageChange={handleCurrentPageChange} />}
       </Container>
     </ThemeProvider>
   );
