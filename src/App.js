@@ -41,7 +41,8 @@ const LOCATION_NAME = '臺北';
 const LOCATION_NAME_FORECAST = '臺北市';
 
 function App() {
-  const [currentCity, setCurrentCity] = useState('臺北市');
+  const storageCity = localStorage.getItem('cityName') || '臺北市';
+  const [currentCity, setCurrentCity] = useState(storageCity);
   const [currentPage, setCurrentPage] = useState('WeatherCard');
   const [currentTheme, setCurrentTheme] = useState('light');
   const handleCurrentCityChange = (currentCity) => {
