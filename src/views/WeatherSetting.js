@@ -90,8 +90,8 @@ const Save = styled.button`
   }
 `;
 
-const WeatherSetting = ({ handleCurrentPageChange }) => {
-  const [locationName, setLocationName] = useState('臺北市');
+const WeatherSetting = ({ cityName, handleCurrentCityChange, handleCurrentPageChange, }) => {
+  const [locationName, setLocationName] = useState(cityName);
 
   const handleChange = (e) => {
     console.log(e.target.value);
@@ -100,6 +100,8 @@ const WeatherSetting = ({ handleCurrentPageChange }) => {
 
   const handleSave = () => {
     console.log('locationName', locationName);
+    handleCurrentCityChange(locationName);
+    handleCurrentPageChange('WeatherCard');
   };
 
   return (

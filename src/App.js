@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { ThemeProvider } from '@emotion/react';
-import { getMoment } from './utils/helpers';
+import { getMoment, findLocation } from './utils/helpers';
 import WeatherCard from './views/WeatherCard';
 import useWeatherAPI from './hooks/useWeatherAPI';
 import WeatherSetting from './views/WeatherSetting';
@@ -41,20 +41,36 @@ const LOCATION_NAME = '臺北';
 const LOCATION_NAME_FORECAST = '臺北市';
 
 function App() {
+  const [currentCity, setCurrentCity] = useState('臺北市');
+  const [currentPage, setCurrentPage] = useState('WeatherCard');
   const [currentTheme, setCurrentTheme] = useState('light');
+  const handleCurrentCityChange = (currentCity) => {
+    setCurrentCity(currentCity);
+  };
+  const currentLocation = useMemo(() => findLocation(currentCity), [
+    currentCity,
+  ]);
 
+  const { cityName, locationName, sunriseCityName } = currentLocation;
   const [weatherElement, fetchData] = useWeatherAPI({
-    locationName: LOCATION_NAME,
-    cityName: LOCATION_NAME_FORECAST,
+    locationName,
+    cityName,
     authorizationKey: AUTHORIZATION_KEY,
   });
 
-  const [currentPage, setCurrentPage] = useState('WeatherCard');
+
   const handleCurrentPageChange = (currentPage) => {
     setCurrentPage(currentPage);
   };
 
-  const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST), []);
+
+
+  const moment = useMemo(() => getMoment(sunriseCityName), [sunriseCityName]);
+
+
+
+
+  // const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST), []);
 
   useEffect(() => {
     setCurrentTheme(moment === 'day' ? 'light' : 'dark');
@@ -69,13 +85,17 @@ function App() {
       <Container>
         {currentPage === 'WeatherCard' && (
           <WeatherCard
+            cityName={cityName}
             weatherElement={weatherElement}
             moment={moment}
             fetchData={fetchData}
             handleCurrentPageChange={handleCurrentPageChange}
           />
         )}
-        {currentPage === 'WeatherSetting' && <WeatherSetting handleCurrentPageChange={handleCurrentPageChange} />}
+        {currentPage === 'WeatherSetting' && <WeatherSetting
+          cityName={cityName}
+          handleCurrentCityChange={handleCurrentCityChange}
+          handleCurrentPageChange={handleCurrentPageChange} />}
       </Container>
     </ThemeProvider>
   );
